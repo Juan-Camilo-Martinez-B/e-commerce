@@ -5,8 +5,14 @@ import '../models/product.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback onTap;
+  final VoidCallback onAddToCart;
 
-  const ProductCard({super.key, required this.product, required this.onTap});
+  const ProductCard({
+    super.key,
+    required this.product,
+    required this.onTap,
+    required this.onAddToCart,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +78,27 @@ class ProductCard extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: onAddToCart,
+                      icon: const Icon(
+                        Icons.add_shopping_cart,
+                        size: 18,
+                      ),
+                      label: const Text(
+                        "Agregar al carrito",
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        textStyle: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/cart.dart';
 import '../models/product.dart';
 import 'checkout_screen.dart';
 
@@ -18,6 +19,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cart = CartScope.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -27,6 +30,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CartScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.shopping_cart_outlined),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -146,20 +162,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  icon: const Icon(Icons.payment),
+                  icon: const Icon(Icons.add_shopping_cart),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CheckoutScreen(
-                          product: widget.product,
-                          size: selectedSize ?? "Not selected",
-                          gender: selectedGender ?? "Not selected",
+                    if (selectedSize == null || selectedGender == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content:
+                              Text("Selecciona talla y género antes de agregar"),
                         ),
+                      );
+                      return;
+                    }
+
+                    cart.addItem(
+                      product: widget.product,
+                      size: selectedSize!,
+                      gender: selectedGender!,
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Producto agregado al carrito"),
                       ),
                     );
                   },
-                  label: const Text("Pay"),
+                  label: const Text("Agregar al carrito"),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),

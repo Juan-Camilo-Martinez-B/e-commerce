@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../data/products.dart';
+import '../models/cart.dart';
 import '../widgets/product_card.dart';
+import 'checkout_screen.dart';
 import 'product_detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -9,6 +11,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cart = CartScope.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -23,6 +27,19 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CartScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.shopping_cart_outlined),
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -42,14 +59,26 @@ class HomeScreen extends StatelessWidget {
           ),
           itemCount: products.length,
           itemBuilder: (context, index) {
+            final product = products[index];
             return ProductCard(
-              product: products[index],
+              product: product,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        ProductDetailScreen(product: products[index]),
+                    builder: (_) => ProductDetailScreen(product: product),
+                  ),
+                );
+              },
+              onAddToCart: () {
+                cart.addItem(
+                  product: product,
+                  size: "No seleccionado",
+                  gender: "No seleccionado",
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Producto agregado al carrito"),
                   ),
                 );
               },
